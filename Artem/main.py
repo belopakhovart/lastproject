@@ -16,6 +16,18 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+@app.route('/corona_main')
+def main():
+    db_session.global_init("db/info.sqlite")
+    session = db_session.create_session()
+
+    i = []
+    for job in session.query(Indicators).all():
+        team = session.query(User).filter(User.id == job.user).first().name
+        team += ' ' + session.query(User).filter(User.id == job.user).first().surname
+        i.append([job.id, job.temperature, job.contact_with_people, job.abroad, job.people_with_corona])
+    return render_template('corona.html', i=i)
+
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
@@ -67,6 +79,7 @@ def reqister():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    db_session.global_init("db/info.sqlite")
     form = LoginForm()
     if request.method == 'POST' and form.validate_on_submit():
         session = db_session.create_session()
@@ -88,8 +101,35 @@ def logout():
 
 @app.route('/index')
 @app.route('/')
-def main_page():
-    return render_template('main.html')
+def qwe():
+    db_session.global_init("db/info.sqlite")
+    return '''<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light bg-light">
+            <h1 class="navbar-brand" href="#">Миссия Колонизация Марса</h1>
+            <p>
+                <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
+                <a class="btn btn-success" href="/login">Войти</a>
+            </p>
+            <h1>Главная</h1>
+        </nav>
+    </header>
+</body>
+</html>'''
+
+
+
 
 
 if __name__ == '__main__':
