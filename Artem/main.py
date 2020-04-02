@@ -16,18 +16,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route('/corona_main')
-def main():
-    db_session.global_init("db/info.sqlite")
-    session = db_session.create_session()
-
-    i = []
-    for job in session.query(Indicators).all():
-        team = session.query(User).filter(User.id == job.user).first().name
-        team += ' ' + session.query(User).filter(User.id == job.user).first().surname
-        i.append([job.id, job.temperature, job.contact_with_people, job.abroad, job.people_with_corona])
-    return render_template('corona.html', i=i)
-
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
@@ -51,6 +39,19 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
 
     submit = SubmitField('Войти')
+
+
+@app.route('/corona_main')
+def main():
+    db_session.global_init("db/info.sqlite")
+    session = db_session.create_session()
+
+    i = []
+    for job in session.query(Indicators).all():
+        team = session.query(User).filter(User.id == job.user).first().name
+        team += ' ' + session.query(User).filter(User.id == job.user).first().surname
+        i.append([job.id, job.temperature, job.contact_with_people, job.abroad, job.people_with_corona])
+    return render_template('corona.html', i=i)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -91,17 +92,23 @@ def login():
     else:
         return render_template('login.html', title='Авторизация', form=form)
 
-@app.route('/selfinfo')
+
+@app.route('/user_info')
 def main1():
     db_session.global_init("db/blogs.sqlite")
     session = db_session.create_session()
 
-    i = []
-    for job in session.query(Indicators).filter(User.surname.address.like(current_user.surname), User.surname.address.like(current_user.name)):
-        team = session.query(User).filter(User.id == job.chief).first().name
-        team += ' ' + session.query(User).filter(User.id == job.chief).first().surname
-        i.append([job.id, job.title, team, job.members, job.email, job.user.id])
-    return render_template('selfinfo.html', i=i)
+    pers = session.query(User).filter(User.id == current_user.id).first()
+    a = [pers.name + ' ' + pers.surname, pers.address, pers.age, pers.email]
+
+    s = []
+    for ind in session.query(Indicators).filter(Indicators.user == current_user.id):
+
+        s.append([ind.temperature, ind.contact_with_people, ind.abroad,
+                  ind.people_with_corona, ind.do_user_know_about, ind.self_isolatioon])
+
+    return render_template('selfinfo.html', a=a, s=s)
+
 
 @app.route('/logout')
 @login_required
@@ -112,35 +119,9 @@ def logout():
 
 @app.route('/index')
 @app.route('/')
-def qwe():
+def main_page():
     db_session.global_init("db/info.sqlite")
-    return '''<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-light bg-light">
-            <h1 class="navbar-brand" href="#">Миссия Колонизация Марса</h1>
-            <p>
-                <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-                <a class="btn btn-success" href="/login">Войти</a>
-            </p>
-            <h1>Главная</h1>
-        </nav>
-    </header>
-</body>
-</html>'''
-
-
-
+    return render_template('main.html')
 
 
 if __name__ == '__main__':

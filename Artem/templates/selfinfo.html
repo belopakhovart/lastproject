@@ -1,34 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Departments</h1>
+<h1>Личная информация</h1>
 <table>
-    {% for a in i %}
-
-    <tr>
-        <th>Department # {{ a[0] }}</th>
-        <th></th>
-        <th></th>
-        <th></th>
-    </tr>
     <tr class="header">
-        <td class="title">Title of department</td>
-        <td class="title">Chief</td>
-        <td class="title">Members</td>
-        <td class="title">Department Email</td>
+        <td class="title">Имя</td>
+        <td class="title">Адрес</td>
+        <td class="title">Возраст</td>
+        <td class="title">Почта</td>
     </tr>
     <tr class="info">
+        <td>{{ a[0] }}</td>
         <td>{{ a[1] }}</td>
         <td>{{ a[2] }}</td>
         <td>{{ a[3] }}</td>
-        <td>{{ a[4] }}</td>
-        {% if a[5] == current_user.id %}
-        <td>
-            <a class="btn btn-primary" href="/edit_job/{{ a[0] }}">Редактировать департамент</a>
-            <a class="btn btn-danger" href="/job_delete/{{ a[0] }}">Удалить департамент</a>
-        </td>
-        {% endif %}
     </tr>
+</table>
+<h1>Статистические данные</h1>
+<table>
+        <tr class="header">
+            <td class="title">Температура</td>
+            <td class="title">Контакт с людьми</td>
+            <td class="title">Был ли заграницей</td>
+            <td class="title">Зараженные среди знакомых</td>
+            <td class="title">Знания о вирусе</td>
+            <td class="title">Самоизоляция</td>
+        </tr>
+    {% for a in s %}
+        <tr class="info">
+            <td>{{ a[0] }}</td>
+            <td>{% if a[1] == 1 %} YES {% else %} NO {% endif %}</td>
+            <td>{% if a[2] == 1 %} YES {% else %} NO {% endif %}</td>
+            <td>{% if a[3] == 1 %} YES {% else %} NO {% endif %}}</td>
+            <td>{% if a[4] == 1 %} YES {% else %} NO {% endif %}</td>
+            <td>{% if a[5] == 1 %} YES {% else %} NO {% endif %}</td>
+        </tr>
     {% endfor %}
 </table>
+
 {% endblock %}
