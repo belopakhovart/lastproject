@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Work logs</h1>
+<table>
+    {% for a in i %}
+
+    <tr>
+        <th>Action # {{ a[0] }}</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr class="header">
+        <td class="title">Title of activity</td>
+        <td class="title">Team leader</td>
+        <td class="title">Duration</td>
+        <td class="title">List of collaborators</td>
+        <td class="title">Is finished</td>
+    </tr>
+    <tr class="info">
+        <td>{{ a[1] }}</td>
+        <td>{{ a[2] }}</td>
+        <td>{{ a[3] }} hours</td>
+        <td>{{ a[4] }}</td>
+        <td class="fin">{% if a[5] == 1 %} Finished {% else %} Is not finished {% endif %}</td>
+        {% if a[6] == current_user.id %}
+        <td>
+            <a class="btn btn-primary" href="/edit_job/{{ a[0] }}">Редактировать работу</a>
+            <a class="btn btn-danger" href="/job_delete/{{ a[0] }}">Удалить работу</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
