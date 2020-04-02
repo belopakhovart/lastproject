@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, request
 from data import db_session
 from data.users import User
 from data.indicators import Indicators
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.fields.html5 import EmailField
@@ -91,6 +91,17 @@ def login():
     else:
         return render_template('login.html', title='Авторизация', form=form)
 
+@app.route('/selfinfo')
+def main1():
+    db_session.global_init("db/blogs.sqlite")
+    session = db_session.create_session()
+
+    i = []
+    for job in session.query(Indicators).filter(User.surname.address.like(current_user.surname), User.surname.address.like(current_user.name)):
+        team = session.query(User).filter(User.id == job.chief).first().name
+        team += ' ' + session.query(User).filter(User.id == job.chief).first().surname
+        i.append([job.id, job.title, team, job.members, job.email, job.user.id])
+    return render_template('selfinfo.html', i=i)
 
 @app.route('/logout')
 @login_required

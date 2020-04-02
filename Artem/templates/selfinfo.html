@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Departments</h1>
+<table>
+    {% for a in i %}
+
+    <tr>
+        <th>Department # {{ a[0] }}</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr class="header">
+        <td class="title">Title of department</td>
+        <td class="title">Chief</td>
+        <td class="title">Members</td>
+        <td class="title">Department Email</td>
+    </tr>
+    <tr class="info">
+        <td>{{ a[1] }}</td>
+        <td>{{ a[2] }}</td>
+        <td>{{ a[3] }}</td>
+        <td>{{ a[4] }}</td>
+        {% if a[5] == current_user.id %}
+        <td>
+            <a class="btn btn-primary" href="/edit_job/{{ a[0] }}">Редактировать департамент</a>
+            <a class="btn btn-danger" href="/job_delete/{{ a[0] }}">Удалить департамент</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
