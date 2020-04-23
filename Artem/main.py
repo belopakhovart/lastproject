@@ -54,6 +54,12 @@ def main():
     return render_template('corona.html', i=i)
 
 
+@app.route('/map')
+def map():
+    db_session.global_init("db/info.sqlite")
+    return render_template('map.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     db_session.global_init("db/info.sqlite")
