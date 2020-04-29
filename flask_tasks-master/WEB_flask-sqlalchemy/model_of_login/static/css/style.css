@@ -1,0 +1,25 @@
+h4 {
+    color: #ccc;
+    padding-left: 20px;
+}
+.container h1 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.header {
+    background: #ccc;
+}
+td, th {
+    padding: 20px 60px;
+}
+td {
+    background: #d1c2fc;
+}
+.title {
+    padding: 5px 60px;
+    background: #ccc;
+}
+.fin {
+    background: #fcc2f0;
+}
