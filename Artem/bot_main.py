@@ -7,6 +7,9 @@ from data.users import User
 from data.indicators import Indicators
 from Artem.data.mapapi import *
 
+
+
+
 from config import TOKEN_VK, GROUP_ID
 
 db_session.global_init("db/info.sqlite")
@@ -19,6 +22,8 @@ answers = {'Да': True, 'Нет': False}
 vk_session = vk_api.VkApi(token=TOKEN_VK)
 
 RULES = '''СИДИДОМАБЛЯТЬ'''
+
+RULES = ''''''
 
 QUESTIONS = [('Какая у Вас температура?', 0),
              ('Часто ли Вы контактируете с людьми?', 1),
@@ -67,14 +72,16 @@ def gen_result_keyboard():
 
 
 def answer_checking(vk, uid, msg):
+    global name, surname
     users_answer = msg.text
+
     session = db_session.create_session()
     if users_answer == 'Мой результат':
         vk.messages.send(user_id=uid, random_id=get_random_id(),
                          message=' '.join(list(map(str, users_data[uid]['answers']))),
                          keyboard=generate_keyboard(2).get_keyboard())
         ind = Indicators()
-        ind.user =
+        ind.user = session.query(User).filter(User.name == name, User.surname == surname).first()
         ind.temperature = users_data[uid]['answers'][0]
         ind.contact_with_people = users_data[uid]['answers'][1]
         ind.abroad = users_data[uid]['answers'][2]
@@ -83,7 +90,11 @@ def answer_checking(vk, uid, msg):
         ind.self_isolatioon = users_data[uid]['answers'][5]
         ind.address = users_data[uid]['answers'][6]
         session.add(ind)
-        session.commit()
+
+    if users_answer == 'Мой результат':
+        vk.messages.send(user_id=uid, random_id=get_random_id(),
+                         message=' '.join(list(map(str, users_data[uid]['answers']))), keyboard=generate_keyboard(2).get_keyboard())
+
     if users_answer != 'Мой результат':
         if 'answers' not in users_data[uid]:
             users_data[uid]['answers'] = []
@@ -157,16 +168,21 @@ def show_map(vk, uid):
                      keyboard=generate_keyboard(2).get_keyboard())
 
 
+
+
 def main():
+    global name, surname
+    vk_session = vk_api.VkApi(token=TOKEN_VK)
     longpoll = VkBotLongPoll(vk_session, GROUP_ID)
     for event in longpoll.listen():
-        name, surname = vk_session.method('users.get',{'user_ids': event.obj.message['from_id']})[0]['first_name'], vk_session.method('users.get',{'user_ids': event.obj.message['from_id']})[0]['last_name']
-
         if event.type == VkBotEventType.MESSAGE_NEW:
             vk = vk_session.get_api()
             uid = event.message.from_id
             response = vk.users.get(user_id=uid)
             users_data[uid] = users_data.get(uid, dict())
+            user = vk.users.get(user_ids=uid, fields=['city'])[0]
+            name, surname = user["first_name"], user["last_name"]
+            print(name, surname)
             try:
                 if 'state' not in users_data[uid]:
                     new_user(response, vk, uid)
