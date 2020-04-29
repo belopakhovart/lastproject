@@ -13,10 +13,11 @@ class Indicators(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    user = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    user = sqlalchemy.Column(sqlalchemy.String)
     temperature = sqlalchemy.Column(sqlalchemy.Float)
     contact_with_people = sqlalchemy.Column(sqlalchemy.Boolean)
     abroad = sqlalchemy.Column(sqlalchemy.Boolean)
     people_with_corona = sqlalchemy.Column(sqlalchemy.Boolean)
     do_user_know_about = sqlalchemy.Column(sqlalchemy.Boolean)
     self_isolatioon = sqlalchemy.Column(sqlalchemy.Boolean)
+    address = sqlalchemy.Column(sqlalchemy.String)

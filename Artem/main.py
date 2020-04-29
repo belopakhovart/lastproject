@@ -43,9 +43,7 @@ class RegisterForm(FlaskForm):
 
 @app.route('/corona_main')
 def main():
-    db_session.global_init("db/info.sqlite")
     session = db_session.create_session()
-
     i = []
     for job in session.query(Indicators).all():
         team = session.query(User).filter(User.id == job.user).first().name
