@@ -60,9 +60,9 @@ def show_maps(obj, map_type="map", add_params=None):
         map_request = "http://static-maps.yandex.ru/1.x/?l={map_type}".format(**locals())
 
     if add_params:
-        map_request += "&" + add_params
+        map_request += "&pt=" + add_params
     response = requests.get(map_request)
-
+    print(response)
     if not response:
         print("Ошибка выполнения запроса:")
         print(map_request)

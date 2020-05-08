@@ -2,10 +2,9 @@
 
 {% block content %}
 <h1>Личная информация</h1>
-<table>
+<table style="margin: 0 auto;">
     <tr class="header">
         <td class="title">Имя</td>
-        <td class="title">Адрес</td>
         <td class="title">Возраст</td>
         <td class="title">Почта</td>
     </tr>
@@ -13,27 +12,37 @@
         <td>{{ a[0] }}</td>
         <td>{{ a[1] }}</td>
         <td>{{ a[2] }}</td>
-        <td>{{ a[3] }}</td>
     </tr>
 </table>
 <h1>Статистические данные</h1>
-<table>
+<table style="margin: 0 auto; margin-bottom: 40px;">
         <tr class="header">
             <td class="title">Температура</td>
             <td class="title">Контакт с людьми</td>
             <td class="title">Был ли заграницей</td>
-            <td class="title">Зараженные среди знакомых</td>
-            <td class="title">Знания о вирусе</td>
-            <td class="title">Самоизоляция</td>
+            <td class="title">Зараженные среди<br>знакомых</td>
         </tr>
     {% for a in s %}
         <tr class="info">
             <td>{{ a[0] }}</td>
             <td>{% if a[1] == 1 %} YES {% else %} NO {% endif %}</td>
             <td>{% if a[2] == 1 %} YES {% else %} NO {% endif %}</td>
-            <td>{% if a[3] == 1 %} YES {% else %} NO {% endif %}}</td>
+            <td>{% if a[3] == 1 %} YES {% else %} NO {% endif %}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<table style="margin: 0 auto;">
+        <tr class="header">
+            <td class="title">Знания о вирусе</td>
+            <td class="title">Самоизоляция</td>
+            <td class="title">Адрес</td>
+        </tr>
+    {% for a in s %}
+        <tr class="info">
             <td>{% if a[4] == 1 %} YES {% else %} NO {% endif %}</td>
             <td>{% if a[5] == 1 %} YES {% else %} NO {% endif %}</td>
+            <td>{{ a[6] }}</td>
         </tr>
     {% endfor %}
 </table>

@@ -18,7 +18,9 @@
             <a class="mark mR analytics-app-popup-mark " href="/logout">{{ current_user.name }} {{ current_user.surname }} (выйти)</a>
             <a class="btn btn-primary " href="/user_info" methods="POST">Личная информация</a>
             <a class="btn btn-primary " href="/map" methods="POST">Карта</a>
-            <a class="btn btn-primary " href="/statistics" methods="POST">Статистика</a>
+            <a class="btn btn-primary " href="/" methods="POST">Статистика</a>
+            <a class="btn btn-primary " href="/coronainfo" methods="POST">О коронавирусе</a>
+            <a class="btn btn-primary " href="/news" methods="POST">Новости</a>
         </p>
         {% else %}
         <p>
