@@ -6,7 +6,7 @@ from data.users import User
 from data.indicators import Indicators
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
@@ -53,6 +53,40 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
 
     submit = SubmitField('Войти')
+
+
+class AnkForm(FlaskForm):
+    temperature = StringField('Какая у вас температура?', validators=[DataRequired()])
+    contact_with_people = RadioField('Часто ли Вы контактируете с людьми?', choices=[('1', 'Да'), ('0', 'Нет')])
+    abroad = RadioField('Были ли Вы за границей недавно?', choices=[('1', 'Да'), ('0', 'Нет')])
+    people_with_corona = RadioField('Контактировали с заболевшими?', choices=[('1', 'Да'), ('0', 'Нет')])
+    do_user_know_about = RadioField('Знаете ли вы о правилах в период эпидемии?', choices=[('1', 'Да'), ('0', 'Нет')])
+    self_isolatioon = RadioField('Соблюдаете ли Вы самоизоляцию?', choices=[('1', 'Да'), ('0', 'Нет')])
+    address = StringField('Ваш адрес', validators=[DataRequired()])
+
+    submit = SubmitField('Сохранить')
+
+
+@app.route('/ank', methods=['GET', 'POST'])
+def ank():
+    db_session.global_init("db/info.sqlite")
+    session = db_session.create_session()
+    form = AnkForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        ind = Indicators()
+        ind.user = current_user.id
+        ind.temperature = float(form.temperature.data.replace(',', '.'))
+        ind.contact_with_people = bool(int(form.contact_with_people.data))
+        ind.abroad = bool(int(form.abroad.data))
+        ind.people_with_corona = bool(int(form.people_with_corona.data))
+        ind.do_user_know_about = bool(int(form.do_user_know_about.data))
+        ind.self_isolatioon = bool(int(form.self_isolatioon.data))
+        ind.address = form.address.data
+        session.add(ind)
+        session.commit()
+        session.close()
+        return redirect('/user_info')
+    return render_template('ank.html', form=form)
 
 
 @app.route('/corona_main')

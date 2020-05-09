@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    {% for x in a %}
+
+    <tr>
+        <td>{{ x[2] }}</td>
+        <td><a href="{{ x[1] }}">{{ x[0] }}</a></td>
+    </tr>
+
+    {% endfor %}
+</table>
+{% endblock %}
