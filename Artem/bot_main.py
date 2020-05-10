@@ -103,18 +103,23 @@ def answer_checking(vk, uid, msg):
     users_answer = msg.text
     session = db_session.create_session()
     if users_answer == 'Мой результат':
-        ind = Indicators()
-        ind.user = session.query(User).filter(User.name == name, User.surname == surname).first().id
-        ind.temperature = float(users_data[uid]['answers'][0])
-        ind.contact_with_people = users_data[uid]['answers'][1]
-        ind.abroad = users_data[uid]['answers'][2]
-        ind.people_with_corona = users_data[uid]['answers'][3]
-        ind.do_user_know_about = users_data[uid]['answers'][4]
-        ind.self_isolatioon = users_data[uid]['answers'][5]
-        ind.address = users_data[uid]['answers'][6]
-        session.add(ind)
-        session.commit()
-        session.close()
+        try:
+            ind = Indicators()
+            ind.user = session.query(User).filter(User.name == name, User.surname == surname).first().id
+            ind.temperature = float(users_data[uid]['answers'][0].replace(',', '.'))
+            ind.contact_with_people = users_data[uid]['answers'][1]
+            ind.abroad = users_data[uid]['answers'][2]
+            ind.people_with_corona = users_data[uid]['answers'][3]
+            ind.do_user_know_about = users_data[uid]['answers'][4]
+            ind.self_isolatioon = users_data[uid]['answers'][5]
+            ind.address = users_data[uid]['answers'][6]
+            session.add(ind)
+            session.commit()
+            session.close()
+        except:
+            vk.messages.send(user_id=uid, random_id=get_random_id(),
+                             message='''Произошла ошибка. Возможно, вы невнимательно прочли правила.''',
+                             keyboard=generate_keyboard(2).get_keyboard())
       
         b = {'contact_with_people': {True: 1, False: 0},
              'abroad': {True: 1, False: 0},
@@ -199,7 +204,6 @@ def answer_checking(vk, uid, msg):
         if users_answer in answers:
             users_data[uid]['answers'].append(answers[users_answer])
         else:
-            print(users_data[uid])
             if users_data[uid]['current_quest'][0] == 'Какая у Вас температура?':
                 users_data[uid]['answers'].append(float(users_answer))
             else:
@@ -212,7 +216,6 @@ def send_next(vk, uid):
     try:
         current_quest = next(users_data[uid]['quest'])
         users_data[uid]['current_quest'] = current_quest
-        print(users_data[uid]['current_quest'])
         keyb = current_quest[1]
         if keyb == 0:
             vk.messages.send(user_id=uid, random_id=get_random_id(),
@@ -234,6 +237,9 @@ def new_user(response, vk, uid):
     message = f"Привет, {response[0]['first_name']}!"
     vk.messages.send(user_id=uid,
                      message=message,
+                     random_id=get_random_id())
+    vk.messages.send(user_id=uid,
+                     message='Прочтите, пожалуйста, инструкцию к боту в закрепленных сообщениях группы',
                      random_id=get_random_id())
     menu(vk, uid)
 

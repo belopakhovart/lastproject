@@ -21,6 +21,7 @@
             <a class="btn btn-primary " href="/" methods="POST">Статистика</a>
             <a class="btn btn-primary " href="/coronainfo" methods="POST">О коронавирусе</a>
             <a class="btn btn-primary " href="/news" methods="POST">Новости</a>
+            <a class="btn btn-primary " href="/ank" methods="POST">Анкета</a>
         </p>
         {% else %}
         <p>
@@ -31,9 +32,17 @@
     </nav>
 
 </header>
-
+<div class="wrapper">
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
+<footer>
+    <p>
+        Авторы: Белопахов Артем, Коншенко Александр.<br>
+        Ссылка на бота ВК: <a href="https://vk.com/covid_19_web">covid_19_web</a><br>
+        Материалы взяты с <a href="https://стопкоронавирус.рф">стопкоронавирус.рф</a><br>
+    </p>
+</footer>
+</div>
 </body>
 </html>
